@@ -1,16 +1,16 @@
 ENV["RACK_ENV"] ||= "development"
 
 require 'sinatra/base'
-require_relative 'data_mapper_setup'
 require 'sinatra/flash'
 
+require_relative 'data_mapper_setup'
 
 class Shtter < Sinatra::Base
+  use Rack::MethodOverride
 
   enable :sessions
   set :session_secret, 'super secret'
   register Sinatra::Flash
-  use Rack::MethodOverride
   # set :public_folder, Proc.new { File.join(root, 'static') }
 
 
@@ -19,7 +19,7 @@ class Shtter < Sinatra::Base
       @current_user ||= User.get(session[:user_id])
     end
   end
-  
+
   get '/' do
     redirect to('/poops')
   end
@@ -51,7 +51,7 @@ class Shtter < Sinatra::Base
   end
 
   post '/poops' do
-    poop = Poop.create(poop: params[:poop])
+    poop = Poop.first_or_create(poop: params[:poop])
     current_user.poops << poop
     current_user.save
     redirect "/poops"

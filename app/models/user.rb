@@ -17,13 +17,13 @@ class User
   attr_accessor :password_confirmation
 
   include DataMapper::Resource
+  has n, :poops
 
   property :id, Serial
   property :email, String, required: true, unique: true
   property :username, String, required: true, unique: true
   property :password_digest, String, length: 60
 
-  has n, :poops, :through => Resource
 
   validates_confirmation_of :password
   validates_presence_of :email
